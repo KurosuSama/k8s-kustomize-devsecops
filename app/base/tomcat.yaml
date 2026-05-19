@@ -10,10 +10,10 @@ spec:
   template:
     metadata:
       labels:
-        app: vprofile-app'
+        app: vprofile-app
     spec:
       containers:
-        - name: vprofile-app
+        - name: tomcat
           image: kurosusama/vprofilek:latest
           ports:
             - containerPort: 8080

@@ -1,5 +1,4 @@
 apiVersion: apps/v1
-kind: apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vprofile-db
@@ -45,7 +44,7 @@ spec:
             memory: "256Mi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
+            memory: "512Mi"
             cpu: "500m"
       volumes:
       - name: mysql-initdb

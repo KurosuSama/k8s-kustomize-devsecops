@@ -29,6 +29,10 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
 ---
 apiVersion: v1
 kind: Service
