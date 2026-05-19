@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprofile-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vprofile-app
+  template:
+    metadata:
+      labels:
+        app: vprofile-app'
+    spec:
+      containers:
+        - name: vprofile-app
+          image: kurosusama/vprofilek:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "mysql"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "accounts"
+            - name: RABBIT_HOST
+              value: "rabbitmq"
+            - name: MEMCACHED_HOST
+              value: "memcached"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: vprofile-secrets
+                  key: db-user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: vprofile-secrets
+                  key: db-pass
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vprofile-app
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: vprofile-app
+  type: ClusterIP
+    

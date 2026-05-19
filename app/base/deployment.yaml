@@ -1,0 +1,15 @@
+apiVersion: apps/vi
+kind: Deployment
+metadata:
+  name: backend-app
+spec:
+  replicas: 3
+    matchlabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        

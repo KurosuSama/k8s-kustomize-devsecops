@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- mysql-deployment.yaml
+- mysql-service.yaml
+- memcached.yaml
+- rabbitmq.yaml
+- tomcat.yaml
+- nginx.yaml
+
+configMapGenerator:
+- name: mysql-init-config
+  files:
+  - db_backup.sql
+- name: nginx-config
+  files:
+  - nginx.conf

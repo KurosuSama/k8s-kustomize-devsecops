@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprofile-memcached
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vprofile-memcached
+  template:
+    metadata:
+      labels:
+        app: vprofile-memcached
+    spec:
+      containers:
+      - name: memcached
+        image: memcached:alpine
+        ports:
+        - containerPort: 11211
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memcached
+spec:
+  ports:
+  - port: 11211
+    targetPort: 11211
+  selector:
+    app: vprofile-memcached
+  type: ClusterIP

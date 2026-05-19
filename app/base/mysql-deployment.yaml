@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprofile-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vprofile-db
+  template:
+    metadata:
+      labels:
+        app: vprofile-db
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysqlport
+        env:
+        - name: MYSQL_DATABASE
+          value: "accounts"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: vprofile-secrets
+              key: db-root-pass
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: vprofile-secrets
+              key: db-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: vprofile-secrets
+              key: db-pass
+        volumeMounts:
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      volumes:
+      - name: mysql-initdb
+        configMap:
+          name: mysql-init-config
+
+        
+

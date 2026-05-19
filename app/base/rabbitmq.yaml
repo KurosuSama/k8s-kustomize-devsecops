@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprofile-rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vprofile-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: vprofile-rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3-management
+        ports:
+        - containerPort: 5672
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: vprofile-secrets
+              key: mq-user
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: vprofile-secrets
+              key: mq-pass
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  ports:
+  - port: 5672
+    targetPort: 5672
+  selector:
+    app: vprofile-rabbitmq
+  type: ClusterIP
