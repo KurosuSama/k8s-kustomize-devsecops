@@ -9,6 +9,7 @@ resources:
 - tomcat.yaml
 - nginx.yaml
 - sealed-secret.yaml
+- network-policy.yaml
 
 configMapGenerator:
 - name: mysql-init-config

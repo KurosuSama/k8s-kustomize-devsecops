@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vprofile-db-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: vprofile-app
+    ports:
+    - protocol: TCP
+      port: 3306
