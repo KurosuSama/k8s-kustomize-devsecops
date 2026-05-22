@@ -39,12 +39,10 @@ kind: Service
 metadata:
   name: vprofile-web
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: vprofile-web
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30080
-
         

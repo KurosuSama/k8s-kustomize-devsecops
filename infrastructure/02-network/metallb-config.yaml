@@ -1,0 +1,17 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: single-ip-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 46.101.123.89/32
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: l2-advertise
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - single-ip-pool
