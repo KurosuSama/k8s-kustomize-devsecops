@@ -12,6 +12,7 @@ spec:
       labels:
         app: vprofile-app
     spec:
+      enableServiceLinks: false
       containers:
         - name: tomcat
           image: kurosusama/vprofilek:latest
@@ -26,6 +27,8 @@ spec:
               value: "accounts"
             - name: RABBIT_HOST
               value: "rabbitmq"
+            - name: RABBITMQ_PORT
+              value: "5672"
             - name: MEMCACHED_HOST
               value: "memcached"
             - name: DB_USER
