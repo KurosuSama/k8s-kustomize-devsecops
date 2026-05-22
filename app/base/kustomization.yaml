@@ -8,6 +8,7 @@ resources:
 - rabbitmq.yaml
 - tomcat.yaml
 - nginx.yaml
+- sealed-secret.yaml
 
 configMapGenerator:
 - name: mysql-init-config
