@@ -16,6 +16,12 @@ rules:
 - apiGroups: [""]
   resources: ["services", "configmaps"]
   verbs: ["get", "list"]
+- apiGroups: ["bitnami.com"]
+  resources: ["sealedsecrets"]
+  verbs: ["get", "list", "patch", "update"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "patch", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
