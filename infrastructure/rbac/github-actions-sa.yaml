@@ -5,26 +5,37 @@ metadata:
   namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   name: github-ci-deployer
+  namespace: staging
 rules:
 - apiGroups: ["apps"]
-  resources: ["deployment", "statefulsets"]
-  verbs: ["get", "list", "patch", "update", "create", "delete"]
+  resources: ["deployments", "statefulsets"]
+  verbs: ["get", "list", "patch", "update"]
 - apiGroups: [""]
-  resources: ["pods", "services", "configmaps"]
-  verbs: ["get", "list", "patch", "update", "create", "delete"]
+  resources: ["services", "configmaps"]
+  verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata: 
   name: github-ci-deployer-binding
+  namespace: staging
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: github-ci-deployer
 subjects:
   - kind: ServiceAccount
     name: github-ci-bot
     namespace: default
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-ci-bot-token
+  namespace: default
+  annotations:
+    kubernetes.io/service-account.name: "github-ci-bot"
+type: kubernetes.io/service-account-token
