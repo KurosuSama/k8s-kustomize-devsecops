@@ -11,3 +11,31 @@ grafana:
       memory: "128Mi"
     limits:
       memory: "512Mi"
+
+alertmanager:
+  alertmanagerSpec:
+    alertmanagerConfigMatcherStrategy:
+      type: None
+  templateFiles:
+    telegram.tmpl: |-
+      {{ define "telegram.custom.message" }}
+      {{ if gt (len .Alerts.Firing) 0 }}
+      🔥 <b>[FIRING: {{ len .Alerts.Firing }}]</b> 🔥
+      {{ range .Alerts.Firing }}
+      <b>Alert:</b> {{ .Labels.alertname }}
+      <b>Severity:</b> {{ .Labels.severity }}
+      <b>Details:</b> {{ if .Annotations.description }}{{ .Annotations.description }}{{ else }}{{ .Annotations.summary }}{{ end }}
+      <b>Started:</b> {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+      ---------------------------------
+      {{ end }}
+      {{ end }}
+
+      {{ if gt (len .Alerts.Resolved) 0 }}
+      ✅ <b>[RESOLVED: {{ len .Alerts.Resolved }}]</b> ✅
+      {{ range .Alerts.Resolved }}
+      <b>Alert:</b> {{ .Labels.alertname }}
+      <b>Resolved:</b> {{ .EndsAt.Format "2006-01-02 15:04:05" }}
+      ---------------------------------
+      {{ end }}
+      {{ end }}
+      {{ end }}

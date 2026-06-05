@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: telegram-config
+  namespace: monitoring
+  labels:
+    release: prometheus 
+spec:
+  route:
+    groupBy: ['alertname', 'namespace']
+    groupWait: 10s
+    groupInterval: 1m
+    repeatInterval: 1h
+    receiver: 'telegram'
+  receivers:
+  - name: 'telegram'
+    telegramConfigs:
+    - chatID: -5234568640
+      botToken:
+        name: telegram-config
+        key: bot_token
+      parseMode: HTML
+      message: '{{ template "telegram.custom.message" . }}'
