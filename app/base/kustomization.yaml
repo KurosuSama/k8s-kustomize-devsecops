@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
 - mysql-deployment.yaml
-- mysql-service.yaml
 - memcached.yaml
 - rabbitmq.yaml
 - tomcat.yaml
@@ -18,3 +17,18 @@ configMapGenerator:
 - name: nginx-config
   files:
   - nginx.conf
+
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/securityContext/seccompProfile
+        value:
+          type: RuntimeDefault
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext
+        value:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]

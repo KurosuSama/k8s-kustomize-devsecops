@@ -12,11 +12,13 @@ spec:
       labels:
         app: vprofile-web
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: nginx
-        image: nginx:1.25-alpine
+        image: nginxinc/nginx-unprivileged:1.25-alpine
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           name: webport
         volumeMounts:
           - name: nginx-config-volume
@@ -44,5 +46,5 @@ spec:
     app: vprofile-web
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8080
         

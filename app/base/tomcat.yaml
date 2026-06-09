@@ -12,6 +12,10 @@ spec:
       labels:
         app: vprofile-app
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
       enableServiceLinks: false
       containers:
         - name: tomcat
