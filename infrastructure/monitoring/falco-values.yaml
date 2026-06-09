@@ -1,0 +1,7 @@
+falcosidekick:
+  enabled: true
+  config:
+    existingSecret: falco-telegram
+    telegram:
+      chatid: "-5234568640"
+      minimumpriority: warning
