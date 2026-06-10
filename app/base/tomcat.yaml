@@ -19,20 +19,14 @@ spec:
       enableServiceLinks: false
       containers:
         - name: tomcat
-          image: kurosusama/vprofilek:latest
+          image: kurosusama/vprofilek:v1.0.1
           ports:
             - containerPort: 8080
           env:
             - name: DB_HOST
               value: "mysql"
-            - name: DB_PORT
-              value: "3306"
-            - name: DB_NAME
-              value: "accounts"
-            - name: RABBIT_HOST
+            - name: RABBITMQ_HOST
               value: "rabbitmq"
-            - name: RABBITMQ_PORT
-              value: "5672"
             - name: MEMCACHED_HOST
               value: "memcached"
             - name: DB_USER
@@ -45,6 +39,23 @@ spec:
                 secretKeyRef:
                   name: vprofile-secrets
                   key: db-pass
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: vprofile-secrets
+                  key: mq-user
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: vprofile-secrets
+                  key: mq-pass
+          volumeMounts:
+            - name: tomcat-temp
+              mountPath: /usr/local/tomcat/temp
+            - name: tomcat-work
+              mountPath: /usr/local/tomcat/work
+            - name: tomcat-logs
+              mountPath: /usr/local/tomcat/logs
           resources:
             requests:
               memory: "256Mi"
@@ -52,6 +63,16 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+      volumes:
+        - name: tomcat-temp
+          emptyDir: {}
+        - name: tomcat-work
+          emptyDir: {}
+        - name: tomcat-logs
+          emptyDir: {}
+        
+
+            
 ---
 apiVersion: v1
 kind: Service

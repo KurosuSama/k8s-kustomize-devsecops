@@ -32,3 +32,38 @@ patches:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+  - target:
+      kind: Deployment
+      name: vprofile-memcached
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true
+  - target:
+      kind: Deployment
+      name: vprofile-rabbitmq
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true
+  - target:
+      kind: Deployment
+      name: vprofile-web
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true
+  - target:
+      kind: Deployment
+      name: vprofile-app
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true
+  - target:
+      kind: Deployment
+      name: vprofile-db
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true

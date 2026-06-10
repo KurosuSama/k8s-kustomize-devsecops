@@ -43,6 +43,12 @@ spec:
         volumeMounts:
         - name: mysql-initdb
           mountPath: /docker-entrypoint-initdb.d
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: mysql-run
+          mountPath: /var/run/mysqld
+        - name: tmp
+          mountPath: /tmp
         resources:
           requests:
             memory: "256Mi"
@@ -54,6 +60,12 @@ spec:
       - name: mysql-initdb
         configMap:
           name: mysql-init-config
+      - name: mysql-data
+        emptyDir: {}
+      - name: mysql-run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
 
         
 

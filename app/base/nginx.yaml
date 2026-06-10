@@ -24,6 +24,10 @@ spec:
           - name: nginx-config-volume
             mountPath: /etc/nginx/nginx.conf
             subPath: nginx.conf
+          - name: cache
+            mountPath: /var/cache/nginx
+          - name: tmp
+            mountPath: /tmp
         resources:
           requests:
             memory: "64Mi"
@@ -35,6 +39,10 @@ spec:
         - name: nginx-config-volume
           configMap:
             name: nginx-config
+        - name: cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
