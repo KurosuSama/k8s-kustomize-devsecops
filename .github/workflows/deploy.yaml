@@ -41,18 +41,20 @@ jobs:
         env:
           KUBE_HOST: ${{ secrets.KUBE_HOST }}
           KUBE_TOKEN: ${{ secrets.KUBE_TOKEN }}
+          KUBE_CA: ${{secrets.KUBE_CA}}
         run: |
+          echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
           echo "Deploying to staging namespace..."
 
           kubectl --server="$KUBE_HOST" \
                   --token="$KUBE_TOKEN" \
-                  --insecure-skip-tls-verify=true \
+                  --certificate-authority=/tmp/ca.crt \
                   apply -k app/overlays/staging
 
           echo "Waiting for pods to be ready..."
           kubectl --server="$KUBE_HOST" \
                   --token="$KUBE_TOKEN" \
-                  --insecure-skip-tls-verify=true \
+                  --certificate-authority=/tmp/ca.crt \
                   rollout status deployment/vprofile-app -n staging --timeout=5m
       
       - name: Verify staging health
@@ -60,7 +62,9 @@ jobs:
         env:
           KUBE_HOST: ${{ secrets.KUBE_HOST }}
           KUBE_TOKEN: ${{ secrets.KUBE_TOKEN }}
+          KUBE_CA: ${{secrets.KUBE_CA}}
         run: |
+          echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
           echo "=== Active Pods in Staging ==="
-          kubectl --server="$KUBE_HOST" --token="$KUBE_TOKEN" --insecure-skip-tls-verify=true get pods -n staging
+          kubectl --server="$KUBE_HOST" --token="$KUBE_TOKEN" --certificate-authority=/tmp/ca.crt get pods -n staging
 
