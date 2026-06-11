@@ -47,7 +47,7 @@ jobs:
           echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
           echo "Deploying to staging namespace..."
 
-          kubectl apply -k app/overlays/staging
+          kubectl apply -k app/overlays/staging \
                   --server="$KUBE_HOST" \
                   --token="$KUBE_TOKEN" \
                   --certificate-authority=/tmp/ca.crt
