@@ -12,6 +12,11 @@ spec:
     groupInterval: 1m
     repeatInterval: 1h
     receiver: 'telegram'
+    routes:
+      - matchers:
+          - name: alertname
+            value: Watchdog
+        receiver: 'null'
   receivers:
   - name: 'telegram'
     telegramConfigs:
@@ -21,3 +26,4 @@ spec:
         key: bot_token
       parseMode: HTML
       message: '{{ template "telegram.custom.message" . }}'
+  - name: 'null'

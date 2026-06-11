@@ -19,7 +19,8 @@ spec:
       enableServiceLinks: false
       containers:
         - name: tomcat
-          image: kurosusama/vprofilek:v1.0.1
+          image: kurosusama/vprofilek:v1.0.1@sha256:54b9d9703bb34d76bbb1091726ce2d35e2e159cfa247e532f15fee39ee154342
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:

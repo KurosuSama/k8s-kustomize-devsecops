@@ -39,3 +39,12 @@ alertmanager:
       {{ end }}
       {{ end }}
       {{ end }}
+
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false

@@ -1,0 +1,11 @@
+customRules:
+  overrides.yaml: |-
+    - rule: Clear Log Activities
+      condition: and container
+      override:
+        condition: append
+
+    - rule: Read sensitive file untrusted
+      condition: and container
+      override:
+        condition: append
