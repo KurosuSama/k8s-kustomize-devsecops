@@ -47,16 +47,17 @@ jobs:
           echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
           echo "Deploying to staging namespace..."
 
-          kubectl --server="$KUBE_HOST" \
+          kubectl apply -k app/overlays/staging
+                  --server="$KUBE_HOST" \
                   --token="$KUBE_TOKEN" \
-                  --certificate-authority=/tmp/ca.crt \
-                  apply -k app/overlays/staging
+                  --certificate-authority=/tmp/ca.crt
+                  
 
           echo "Waiting for pods to be ready..."
-          kubectl --server="$KUBE_HOST" \
+          kubectl rollout status deployment/vprofile-app -n staging --timeout=5m \
+                  --server="$KUBE_HOST" \
                   --token="$KUBE_TOKEN" \
-                  --certificate-authority=/tmp/ca.crt \
-                  rollout status deployment/vprofile-app -n staging --timeout=5m
+                  --certificate-authority=/tmp/ca.crt
       
       - name: Verify staging health
         if: always()
@@ -67,8 +68,9 @@ jobs:
         run: |
           echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
           echo "=== Active Pods in Staging ==="
-          kubectl --server="$KUBE_HOST" \
+          kubectl get pods -n staging \
+                  --server="$KUBE_HOST" \
                   --token="$KUBE_TOKEN" \
-                  --certificate-authority=/tmp/ca.crt \ 
-                  get pods -n staging
+                  --certificate-authority=/tmp/ca.crt
+                  
 
