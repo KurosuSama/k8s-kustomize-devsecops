@@ -1,18 +1,163 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: vprofile-db-policy
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-external-to-web
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-web
+  policyTypes: [Ingress]
+  ingress:
+     - ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-to-app
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-app
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: vprofile-web
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-web
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: vprofile-app
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-to-db
 spec:
   podSelector:
     matchLabels:
       app: vprofile-db
-  policyTypes:
-  - Ingress
+  policyTypes: [Ingress]
   ingress:
   - from:
-    - podSelector:
-        matchLabels:
-          app: vprofile-app
+      - podSelector:
+          matchLabels:
+            app: vprofile-app
     ports:
     - protocol: TCP
       port: 3306
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-to-rabbitmq
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-rabbitmq
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: vprofile-app
+      ports:
+        - protocol: TCP
+          port: 5672
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-to-memcached
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-memcached
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: vprofile-app
+      ports:
+        - protocol: TCP
+          port: 11211
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: vprofile-app
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: vprofile-db
+      ports:
+        - protocol: TCP
+          port: 3306
+    - to:
+        - podSelector:
+            matchLabels:
+              app: vprofile-rabbitmq
+      ports:
+        - protocol: TCP
+          port: 5672
+    - to:
+        - podSelector:
+            matchLabels:
+              app: vprofile-memcached
+      ports:
+        - protocol: TCP
+          port: 11211
+
+
