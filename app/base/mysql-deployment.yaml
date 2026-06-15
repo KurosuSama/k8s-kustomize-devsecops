@@ -57,6 +57,13 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+        readinessProbe:
+          exec: 
+            command: ["sh", "-c", "mysqladmin ping -h localhost"]
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket: { port: 3306 }
+          initialDelaySeconds: 30
       volumes:
       - name: mysql-initdb
         configMap:

@@ -35,6 +35,10 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
+        readinessProbe:
+          httpGet: { path: /, port: 8080 }
+        livenessProbe:
+          httpGet: { path: /, port: 8080 }
       volumes:
         - name: nginx-config-volume
           configMap:
