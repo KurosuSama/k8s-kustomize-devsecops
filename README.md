@@ -13,8 +13,8 @@ A security-hardened Kubernetes deployment of a multi-tier application, built wit
 
 The project was built in two phases:
 
-* **Phase 1** - **Deployment.** A multi-tier application running on Kubernetes with Kustomize (base + overlays). The application itself (a multi-tier Java stack) is just a realistic workload — the project is really about the platform around it.
-* **Phase 2** - **Security.** Auditing the deployment against DevSecOps practices and working through the gaps one layer at a time: supply chain, pod security, admission control, networking, runtime, and observability.
+* **Phase 1** — **Deployment.** A multi-tier application running on Kubernetes with Kustomize (base + overlays). The application itself (a multi-tier Java stack) is just a realistic workload — the project is really about the platform around it.
+* **Phase 2** — **Security.** Auditing the deployment against DevSecOps practices and working through the gaps one layer at a time: supply chain, pod security, admission control, networking, runtime, and observability.
 
 The goal was to build and secure the infrastructure following DevSecOps best practices across the build, deploy, network, and runtime layers.
 
