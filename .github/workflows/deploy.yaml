@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/*'
+      - 'LICENSE'
+      - '.gitignore'
 
 jobs:
   security-scan:
