@@ -1,0 +1,80 @@
+# Production CD pipeline.
+# NOTE: This workflow demonstrates the production promotion model
+
+
+name: DevSecOps CD Pipeline (Production)
+
+on:
+  release:
+    types: [published]
+    
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout released tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          
+      - name: Run Trivy scanner
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          
+  deploy-prod:
+    name: Deploy to production
+    needs: security-scan
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout released tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+          
+      - name: Deploy to K8s
+        env:
+          KUBE_HOST: ${{ secrets.KUBE_HOST_PROD }}
+          KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_PROD }}
+          KUBE_CA: ${{ secrets.KUBE_CA_PROD }}
+        run: |
+          echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
+          echo "Deploying release ${{ github.event.release.tag_name }} to prod namespace..."
+          kubectl apply -k app/overlays/prod \
+                  --server="$KUBE_HOST" \
+                  --token="$KUBE_TOKEN" \
+                  --certificate-authority=/tmp/ca.crt
+
+          echo "Waiting for pods to be ready..."
+          kubectl rollout status deployment/vprofile-app -n prod --timeout=5m \
+                  --server="$KUBE_HOST" \
+                  --token="$KUBE_TOKEN" \
+                  --certificate-authority=/tmp/ca.crt
+
+      - name: Verify prod health
+        if: always()
+        env:
+          KUBE_HOST: ${{ secrets.KUBE_HOST_PROD }}
+          KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_PROD }}
+          KUBE_CA: ${{ secrets.KUBE_CA_PROD }}
+        run: |
+          echo "$KUBE_CA" | base64 -d > /tmp/ca.crt
+          echo "=== Active Pods in Production ==="
+          kubectl get pods -n prod \
+                  --server="$KUBE_HOST" \
+                  --token="$KUBE_TOKEN" \
+                  --certificate-authority=/tmp/ca.crt
